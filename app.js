@@ -8,7 +8,7 @@ const globalError = require('./middlewares/globalError');
 const { corsMiddleWare } = require('./middlewares/cors');
 
 const { PORT } = require('./utils/utils');
-// const { requestLogger, errorLogger } = require('./middlewares/logger');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const app = express();
 
@@ -16,11 +16,11 @@ app.use(corsMiddleWare);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-// app.use(requestLogger);
+app.use(requestLogger);
 
 app.use(routes);
 
-// app.use(errorLogger);
+app.use(errorLogger);
 app.use(errors());
 app.use(globalError);
 
