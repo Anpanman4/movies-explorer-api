@@ -8,25 +8,47 @@ const OwnerError = require('../errors/owner-err');
 const getMovies = (req, res, next) => {
   Movie.find({})
     .populate(['owner'])
-    .then((movies) => res.send({ data: movies }))
+    .then((movies) => {
+      const filteredMovies = movies.filter((movie) => movie.owner._id.toString() === req.user._id);
+      res.send({ data: filteredMovies });
+    })
     .catch(next);
 };
 
 const createMovie = (req, res, next) => {
   const {
-    // eslint-disable-next-line max-len
-    country, director, duration, year, description, image, trailerLink, thumbnail, movieId, nameRU, nameEN,
+    country,
+    director,
+    duration,
+    year,
+    description,
+    image,
+    trailerLink,
+    thumbnail,
+    movieId,
+    nameRU,
+    nameEN,
   } = req.body;
 
   Movie.create({
-    // eslint-disable-next-line max-len
-    country, director, duration, year, description, image, trailerLink, thumbnail, owner: req.user._id, movieId, nameRU, nameEN,
+    country,
+    director,
+    duration,
+    year,
+    description,
+    image,
+    trailerLink,
+    thumbnail,
+    owner: req.user._id,
+    movieId,
+    nameRU,
+    nameEN,
   })
     .then((movie) => movie.populate(['owner']))
     .then((newMovie) => res.status(201).send((newMovie)))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return next(new SyntexError('Переданы некорректные данные при создании пользователя.'));
+        return next(new SyntexError('Переданы некорректные данные при создании фильма.'));
       }
       return next(err);
     });

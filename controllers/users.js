@@ -26,7 +26,7 @@ const getUserById = (req, res, next) => {
       return next(new NotFoundError('Пользователь по ID не найден'));
     })
     .catch((err) => {
-      if (err.name === 'CastError') return next(new SyntexError('Что-то пошло не так'));
+      if (err.name === 'CastError') return next(new SyntexError('Передан неправильный параметр'));
       return next(err);
     });
 };
@@ -40,9 +40,9 @@ const getUserInfo = (req, res, next) => {
 };
 
 const updateUserInfo = (req, res, next) => {
-  const { name, about } = req.body;
+  const { name, email } = req.body;
 
-  User.findByIdAndUpdate(req.user._id, { name, about }, {
+  User.findByIdAndUpdate(req.user._id, { name, email }, {
     new: true,
     runValidators: true,
   })
@@ -50,6 +50,7 @@ const updateUserInfo = (req, res, next) => {
       if (user) res.send(user);
     })
     .catch((err) => {
+      if (err.name === 'MongoServerError') return next(new SyntexError('Такой Email уже существует.'));
       if (err.name === 'ValidationError') return next(new SyntexError('Переданы некорректные данные для обновления информации.'));
       return next(err);
     });
@@ -65,7 +66,7 @@ const login = (req, res, next) => {
       return compare(password, user.password)
         .then((isMatched) => {
           if (!isMatched) {
-            next(new AuthError('Требуется авторизация'));
+            next(new AuthError('Введен неправильный пароль'));
           } else {
             const jwt = jsonwebtoken.sign({ _id: user._id }, process.env.NODE_ENV !== 'production' ? JWT_SECRET : process.env.JWT_SECRET, {
               expiresIn: '7d',

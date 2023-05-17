@@ -24,7 +24,7 @@ app.use(errorLogger);
 app.use(errors());
 app.use(globalError);
 
-mongoose.connect('mongodb://127.0.0.1:27017/movies-explorer', {
+mongoose.connect(`mongodb://127.0.0.1:27017/${process.env.NODE_ENV === 'production' ? process.env.DATABASE_NAME : 'bitfilmsdb'}`, {
   useNewUrlParser: true,
 });
 
