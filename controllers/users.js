@@ -50,7 +50,7 @@ const updateUserInfo = (req, res, next) => {
       if (user) res.send(user);
     })
     .catch((err) => {
-      if (err.name === 'MongoServerError') return next(new SyntexError('Такой Email уже существует.'));
+      if (err.name === 'MongoServerError') return next(new AlreadyCreatedError('Такой Email уже существует.'));
       if (err.name === 'ValidationError') return next(new SyntexError('Переданы некорректные данные для обновления информации.'));
       return next(err);
     });
