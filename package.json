@@ -8,6 +8,7 @@
   "version": "1.0.0",
   "description": "project for diplom in yandex practikum",
   "main": "index.js",
+  "homepage": "/",
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
